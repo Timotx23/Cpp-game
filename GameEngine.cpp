@@ -25,12 +25,13 @@ void GameEngine::validate_chests(Map_info &map, std::map<std::pair<int,int>,std:
             //std::cout <<"PRINT THE CHEST ID " << chest_data.chest_id <<"\n";
             //std::cout <<"PRINT THE CHEST position " << chest_pos.first << " "<< chest_pos.second <<"\n";
             if (!validate_postion(player_position->first, chests[j].position )){
+           
                 Player& p = std::get<Player>(player_struct[0].name);  
                 if (std::find( p.done_chests.begin(), p.done_chests.end(),chest_data.chest_id ) == p.done_chests.end()) {
                         p.score += 10; 
                         p.done_chests.push_back(chest_data.chest_id);
                         map.mazeMap[player_pos] = p;
-                        player_struct[0].position = player_pos;
+                        
                         std::cout << p.score << "\n";
                         std::cout << chest_data.chest_id << "\n";
                         std::cout << p.done_chests.size() <<"\n";
@@ -42,24 +43,32 @@ void GameEngine::validate_chests(Map_info &map, std::map<std::pair<int,int>,std:
  std::pair<Map_info, bool> GameEngine::update_map(Map_info map,std::vector<ObjectPosition> enemy_pos, std::pair<int, int> player_pos, std::vector<ObjectPosition> &player_struct, std::vector<ObjectPosition> &chests ){
     
     auto player_position = map.mazeMap.find(player_pos);
+    Player& p = std::get<Player>(player_struct[0].name);
+    
+    if (player_position == map.mazeMap.end()) {
+        return {map, false};
+    }
+
+
     if (player_position != map.mazeMap.end() && std::holds_alternative<EmptySpace>(player_position->second)){
-        player_struct[0].position = player_pos;
-        map.mazeMap[player_pos] =  Player{};
+        
+       
+        map.mazeMap[player_pos] = p;
+
+    }
+    else if(player_position != map.mazeMap.end() && std::holds_alternative<Enemy>(player_position->second)){
+        map.mazeMap[player_pos] = p;
     }
     else if (player_position != map.mazeMap.end() && std::holds_alternative<EndState>(player_position->second)) {
+        
+        map.mazeMap[player_pos] = p;
+        }
 
-    player_struct[0].position = player_pos;
-    Player& p = std::get<Player>(player_struct[0].name);
-    map.mazeMap[player_pos] = p;
-    }
     else if (player_position != map.mazeMap.end() && std::holds_alternative<Chest>(player_position->second)){
 
         validate_chests(map, player_position, chests, player_pos, player_struct);
     }
-    else if (player_position != map.mazeMap.end() && std::holds_alternative<Enemy>(player_position->second)){
-        player_struct[0].position = player_pos;
-        //map.mazeMap[player_pos] =  Enemy{};
-    }
+    
     else{
         return {map, false};
     }
@@ -87,13 +96,16 @@ bool GameEngine::validate_postion(std::pair<int, int> player, std::pair<int,int>
 }
 
 
-std::pair <MapInformation, bool> GameEngine::update_state(MapInformation &start_state){
+std::pair <MapInformation, bool> GameEngine::update_state(MapInformation start_state){
     auto new_enemies = new_enemy_pos(start_state.enemies);
     auto old_player = start_state.player[0].position;
     auto new_player = new_player_pos(start_state.player);
+    if (old_player == new_player) {
+    return {start_state, true};
+}
     auto& chests = start_state.treasures;
     auto endstate = start_state.endstate[0];
-    start_state.map_state.mazeMap[old_player] = EmptySpace{};
+    
  
     
     std::pair<Map_info, bool> map = update_map(start_state.map_state, new_enemies, new_player, start_state.player,chests);
@@ -111,11 +123,14 @@ std::pair <MapInformation, bool> GameEngine::update_state(MapInformation &start_
     }
     start_state.map_state = map.first;
     start_state.player[0].position = new_player;
+    start_state.enemies = new_enemies;
+    start_state.map_state = map.first;
+    start_state.treasures = chests;
 
     for (int i =0; i < new_enemies.size(); i ++){
         if (!validate_postion(new_player, new_enemies[i].position )){
-            return {MapInformation{new_enemies, start_state.player, chests, map.first, start_state.endstate}, false};
+            return {start_state, false};
         }
     }
-    return {MapInformation{new_enemies, start_state.player, chests, map.first, start_state.endstate}, true};
+    return {start_state, true};
 }

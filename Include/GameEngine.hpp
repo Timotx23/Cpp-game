@@ -18,7 +18,7 @@ class GameEngine{
         std::pair<Map_info, bool> update_map(Map_info map,  std::vector<ObjectPosition> enemy_position,std::pair<int, int> player_pos, std::vector<ObjectPosition> &player, std::vector<ObjectPosition> &chests);
         bool game_state(MapInformation &start_state);
         std::pair<int, int> valid_player_move(std::vector<ObjectPosition> player_pos);
-        std::pair<MapInformation, bool> update_state(MapInformation &start_state);
+        std::pair<MapInformation, bool> update_state(MapInformation start_state);
         bool game_finished();
 
 

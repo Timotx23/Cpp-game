@@ -20,6 +20,7 @@ class System{
         void display_game(MapInformation &mapinfo);
         std::pair<bool, int> game_finished(std::vector<ObjectPosition> &player_pos, std::vector<ObjectPosition> &end_state, std::vector<ObjectPosition> &chests);
         std::pair<bool, int> can_continue(std::vector<ObjectPosition> &player_pos);
+        MapInformation reset_map(MapInformation starting_state);
 
         
 

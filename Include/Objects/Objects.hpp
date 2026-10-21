@@ -1,7 +1,9 @@
 #pragma once
 #include "raylib.h"
 
-struct GameState{
+struct GameStartState{
+    std::vector< std::pair<int, int>> player_starting_pos;
+    std::vector<std::pair<int, int>> enemy_starting_pos;
 
 };
 

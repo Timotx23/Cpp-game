@@ -76,18 +76,28 @@ std::pair < bool, int > System::can_continue(std::vector<ObjectPosition> &player
     return {true, player.number_of_lives};
 }
 
+MapInformation System::reset_map(MapInformation current_state){
+    MapInformation resetet_map = map_manager.reset_map(current_state);
+
+
+    return resetet_map;
+}
+
 
 void System::run_game(MapInformation game_state){
     MapInformation original_state = game_state;
    
     std::pair<MapInformation,bool> new_state;
+    std::cout<< "PLAYER STATS " << game_state.player[0].position.first <<" "<< game_state.player[0].position.second <<"\n";
+    Player& player_data = std::get<Player>(game_state.player[0].name);
+    std::cout<< "PLAYER Lives " << player_data.number_of_lives  <<"\n";
     while (game_running){
         
         new_state = game_engine.update_state(game_state);
         //Check if state is winning state -> display score and Game Won message -> terminate window
         //check if its loosing state -> Display game over -> terminate window
         //check if the enemies killed it -> take off one life -> restart (reset only player and enemies to original position)
-        std::cout<< "PLAYER STATS " << new_state.first.player[0].position.first <<" "<< new_state.first.player[0].position.second <<"\n";
+        
         
         std::pair<bool, int> is_finished = game_finished(new_state.first.player,new_state.first.endstate, new_state.first.treasures );
         
@@ -105,7 +115,7 @@ void System::run_game(MapInformation game_state){
             std::pair<bool, int> is_over = can_continue(new_state.first.player);
             if (is_over.first){
                 std::cout << "You have " << is_over.second << " lives left" << "\n";
-                //new_state.first.map_state =  original_state.map_state ;
+                new_state.first = reset_map(new_state.first);
 
             }
             else{
@@ -116,7 +126,7 @@ void System::run_game(MapInformation game_state){
         }
 
         display_game(new_state.first); // This will always display the updated state
-        //game_state = new_state.first;
+        game_state = new_state.first;
         
      
 

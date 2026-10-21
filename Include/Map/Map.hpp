@@ -26,6 +26,7 @@ struct MapInformation{
 class MapManager{
     private:
         Map_info MapBitMap;
+        GameStartState game_starting_state;
 
     public:
         
@@ -36,6 +37,9 @@ class MapManager{
         std::pair<int, int> generate_random_position();
         
         std::vector<ObjectPosition> generate_starting_postions(std::string name, int number);
+        MapInformation reset_map(MapInformation current_map);
+
+
 
     
 };
