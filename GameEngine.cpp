@@ -14,9 +14,23 @@ std::pair<int, int> GameEngine::new_player_pos(std::vector<ObjectPosition> playe
     return new_player_pos;
  }
 
- std::vector<ObjectPosition> GameEngine::new_enemy_pos(std::vector<ObjectPosition> enemy){
+ std::vector<ObjectPosition> GameEngine::new_enemy_pos(std::vector<ObjectPosition> enemy, Map_info &map){
+    for (int i = 0; i < enemy.size(); i++){
+        Enemy& e = std::get<Enemy>(enemy[i].name);
+        ObjectPosition current_enemy_pos = enemy[i];
+        std::pair<int, int> new_enemy_pos = enemy_pos.calculate_enemy_movement(current_enemy_pos.position);
+        auto map_enemy_position = map.mazeMap.find(new_enemy_pos);
+
+        if (map_enemy_position != map.mazeMap.end() && std::holds_alternative<EmptySpace>(map_enemy_position->second)){
+            map.mazeMap[current_enemy_pos.position] = EmptySpace{};
+
+            enemy[i].position = new_enemy_pos;
+            map.mazeMap[new_enemy_pos] = e;
+            }
+    }
     return enemy;
  }
+
 
 void GameEngine::validate_chests(Map_info &map, std::map<std::pair<int,int>,std::variant<EmptySpace, Wall, Player, EndState, Enemy, Chest>>::iterator& player_position,  std::vector<ObjectPosition> &chests, std::pair<int, int> &player_pos, std::vector<ObjectPosition> &player_struct){
     for (int j = 0; j < chests.size(); j ++){
@@ -48,27 +62,18 @@ void GameEngine::validate_chests(Map_info &map, std::map<std::pair<int,int>,std:
     if (player_position == map.mazeMap.end()) {
         return {map, false};
     }
-
-
     if (player_position != map.mazeMap.end() && std::holds_alternative<EmptySpace>(player_position->second)){
-        
-       
         map.mazeMap[player_pos] = p;
-
     }
     else if(player_position != map.mazeMap.end() && std::holds_alternative<Enemy>(player_position->second)){
         map.mazeMap[player_pos] = p;
     }
     else if (player_position != map.mazeMap.end() && std::holds_alternative<EndState>(player_position->second)) {
-        
         map.mazeMap[player_pos] = p;
         }
-
     else if (player_position != map.mazeMap.end() && std::holds_alternative<Chest>(player_position->second)){
-
         validate_chests(map, player_position, chests, player_pos, player_struct);
     }
-    
     else{
         return {map, false};
     }
@@ -97,12 +102,14 @@ bool GameEngine::validate_postion(std::pair<int, int> player, std::pair<int,int>
 
 
 std::pair <MapInformation, bool> GameEngine::update_state(MapInformation start_state){
-    auto new_enemies = new_enemy_pos(start_state.enemies);
     auto old_player = start_state.player[0].position;
     auto new_player = new_player_pos(start_state.player);
     if (old_player == new_player) {
-    return {start_state, true};
-}
+        return {start_state, true};
+        }
+    auto new_enemies = new_enemy_pos(start_state.enemies, start_state.map_state);
+    start_state.enemies = new_enemies;
+    
     auto& chests = start_state.treasures;
     auto endstate = start_state.endstate[0];
     
@@ -123,7 +130,6 @@ std::pair <MapInformation, bool> GameEngine::update_state(MapInformation start_s
     }
     start_state.map_state = map.first;
     start_state.player[0].position = new_player;
-    start_state.enemies = new_enemies;
     start_state.map_state = map.first;
     start_state.treasures = chests;
 

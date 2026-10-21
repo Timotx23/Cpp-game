@@ -108,28 +108,20 @@ void System::run_game(MapInformation game_state){
         }
 
         else if (new_state.second == false){
-            
-            //do something that means the player has touched an enemy break the loop immideatly
-
             std::cout <<"You died" << "\n";
             std::pair<bool, int> is_over = can_continue(new_state.first.player);
             if (is_over.first){
                 std::cout << "You have " << is_over.second << " lives left" << "\n";
                 new_state.first = reset_map(new_state.first);
-
             }
             else{
                 std::cout << "GAME OVER" << "\n";
                 game_running = false;
-            }
-            
+            }   
         }
-
         display_game(new_state.first); // This will always display the updated state
         game_state = new_state.first;
         
-     
-
     }
     CloseWindow();
     

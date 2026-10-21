@@ -19,9 +19,7 @@ MapInformation MapManager::starting_position(int number_of_enemies, int number_o
     std::vector<ObjectPosition> chest = generate_starting_postions("chest", number_of_chests);
     std::vector<ObjectPosition> player = generate_starting_postions("player", 1);
     std::vector<ObjectPosition> end_state = generate_starting_postions("end_state", 1);
-
     return MapInformation{enemies,chest,player,MapBitMap, end_state};
-
 };
 
 void MapManager::replace_value(std::pair< int , int > &current_coords,  MapObject map_object){
@@ -64,13 +62,11 @@ std::vector<ObjectPosition> MapManager::generate_starting_postions(std::string n
 
         }
         
-
         else{
             coords = generate_random_position();
             if (name == "chest"){
                 Chest chest{"C", YELLOW, i}; 
                 replace_value(coords, chest );
-                
                 pos.push_back(ObjectPosition{coords, chest });
             }
             else{
@@ -94,7 +90,7 @@ MapInformation MapManager::reset_map(MapInformation current_state){
     current_state.player[0].position = game_starting_state.player_starting_pos[0];
     Player& p =std::get<Player>(current_state.player[0].name);
     current_state.map_state.mazeMap.at(game_starting_state.player_starting_pos[0]) = p;
-
+    
     for (int i = 0; i < game_starting_state.enemy_starting_pos.size(); i++){
         current_state.enemies[i].position = game_starting_state.enemy_starting_pos[i];
         Enemy& enemy =std::get<Enemy>(current_state.enemies[i].name);

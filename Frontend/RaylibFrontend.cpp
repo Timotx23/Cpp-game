@@ -6,14 +6,10 @@ RaylibFrontend::RaylibFrontend(int tileSize)
 void RaylibFrontend::run(MapInformation& mapInfo) {
     const int mapWidth = 20;
     const int mapHeight = 20;
-
     const int screenWidth = mapWidth * tileSize;
     const int screenHeight = mapHeight * tileSize;
-
     InitWindow(screenWidth, screenHeight, "Maze Runner");
-    SetTargetFPS(60);
-    
-    
+    SetTargetFPS(60);   
 }
 
 void RaylibFrontend::drawMap(MapInformation& mapInfo) {
