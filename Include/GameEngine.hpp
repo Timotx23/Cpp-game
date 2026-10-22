@@ -2,6 +2,7 @@
 
 #include "MovingThings/Player.hpp"
 #include "MovingThings/Enemies.hpp"
+#include "MovingThings/AIPlayer.hpp"
 #include "Map/Map.hpp"
 
 
@@ -10,16 +11,18 @@ class GameEngine{
         User player;
         Enemy enemy;
         EnememyMovements enemy_pos;
+        AIPlayer ai_player;
 
     public:
         std::pair<int, int> new_player_pos( std::vector<ObjectPosition> player);
+        std::pair <int, int> ai_player_pos(std::vector<ObjectPosition> player);
         std::vector<ObjectPosition>  new_enemy_pos( std::vector<ObjectPosition>  enemy, Map_info &map);
         void validate_chests(Map_info &map, std::map<std::pair<int,int>,std::variant<EmptySpace, Wall, Player, EndState, Enemy, Chest>>::iterator& player_position,  std::vector<ObjectPosition> &chests, std::pair<int, int> &player_pos, std::vector<ObjectPosition> &player_struct);// chests dont move so idk how necessary this is tbh
         bool validate_postion(std::pair<int, int> player, std::pair<int,int> enemy);
         std::pair<Map_info, bool> update_map(Map_info map,  std::vector<ObjectPosition> enemy_position,std::pair<int, int> player_pos, std::vector<ObjectPosition> &player, std::vector<ObjectPosition> &chests);
         bool game_state(MapInformation &start_state);
         std::pair<int, int> valid_player_move(std::vector<ObjectPosition> player_pos);
-        std::pair<MapInformation, bool> update_state(MapInformation start_state);
+        std::pair<MapInformation, bool> update_state(MapInformation start_state, bool is_ai);
         
         bool game_finished();
        

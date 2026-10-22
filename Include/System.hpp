@@ -14,8 +14,8 @@ class System{
         GameEngine game_engine;
         
     public:
-        void game_runner();
-        void run_game(MapInformation starting_state);
+        void game_runner(bool is_ai_runner);
+        void run_game(MapInformation starting_state, bool is_ai);
         MapInformation load_map();
         void display_game(MapInformation &mapinfo);
         std::pair<bool, int> game_finished(std::vector<ObjectPosition> &player_pos, std::vector<ObjectPosition> &end_state, std::vector<ObjectPosition> &chests);

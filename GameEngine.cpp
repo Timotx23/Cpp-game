@@ -13,6 +13,11 @@ std::pair<int, int> GameEngine::new_player_pos(std::vector<ObjectPosition> playe
     std::pair<int, int> new_player_pos = player.get_user_input(player_position);
     return new_player_pos;
  }
+ std::pair <int, int> GameEngine::ai_player_pos(std::vector<ObjectPosition> player){
+    std::pair<int, int> ai_player_pos = player[0].position;
+    return ai_player.new_ai_player_pos(ai_player_pos);
+
+ }
 
  std::vector<ObjectPosition> GameEngine::new_enemy_pos(std::vector<ObjectPosition> enemy, Map_info &map){
     for (int i = 0; i < enemy.size(); i++){
@@ -101,7 +106,8 @@ bool GameEngine::validate_postion(std::pair<int, int> player, std::pair<int,int>
 }
 
 
-std::pair <MapInformation, bool> GameEngine::update_state(MapInformation start_state){
+std::pair <MapInformation, bool> GameEngine::update_state(MapInformation start_state, bool is_ai){
+
     auto old_player = start_state.player[0].position;
     auto new_player = new_player_pos(start_state.player);
     if (old_player == new_player) {

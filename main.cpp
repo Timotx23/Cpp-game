@@ -5,8 +5,23 @@
 
 int main(){
     static System system;
-    system.game_runner();
-    std::cout <<"WORKS" <<"\n";
+    int is_ai_player;
+
+    std::cout << " Enter 1 for AI player else Enter 0  ";
+    std::cin >> is_ai_player;
+    if (is_ai_player == 1){
+        system.game_runner(true);
+    }
+    else if (is_ai_player == 0){
+        system.game_runner(false);
+    }
+
+
+   
+
+
+ 
+    
 };
 
 /*

@@ -3,11 +3,11 @@
 
 
 
-void System::game_runner(){
+void System::game_runner(bool is_ai_runner){
     
     MapInformation loadmap = load_map();
     frontend.run(loadmap);
-    run_game(loadmap);
+    run_game(loadmap, is_ai_runner);
     /*
     load the map
     load the objects
@@ -84,7 +84,7 @@ MapInformation System::reset_map(MapInformation current_state){
 }
 
 
-void System::run_game(MapInformation game_state){
+void System::run_game(MapInformation game_state, bool is_ai){
     MapInformation original_state = game_state;
    
     std::pair<MapInformation,bool> new_state;
@@ -93,7 +93,7 @@ void System::run_game(MapInformation game_state){
     std::cout<< "PLAYER Lives " << player_data.number_of_lives  <<"\n";
     while (game_running){
         
-        new_state = game_engine.update_state(game_state);
+        new_state = game_engine.update_state(game_state, is_ai);
         //Check if state is winning state -> display score and Game Won message -> terminate window
         //check if its loosing state -> Display game over -> terminate window
         //check if the enemies killed it -> take off one life -> restart (reset only player and enemies to original position)
