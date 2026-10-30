@@ -3,18 +3,10 @@
 
 
 
-void System::game_runner(bool is_ai_runner){
-    
-    MapInformation loadmap = load_map();
+void System::game_runner(bool is_ai_runner, HyperParameters hyperparameters){
+    MapInformation loadmap = load_map(hyperparameters.CHESTS ,hyperparameters.ENEMIES, hyperparameters.FILENAME);
     frontend.run(loadmap);
     run_game(loadmap, is_ai_runner);
-    /*
-    load the map
-    load the objects
-    load starting position
-    should start displaying the game
-    if that all is done it should run the game
-    */
 };
 std::pair <bool, int> System::game_finished(std::vector<ObjectPosition> &player_pos,std::vector<ObjectPosition> &end_state,std::vector<ObjectPosition> &chests  ){
     ObjectPosition player_position = player_pos[0];
@@ -28,17 +20,7 @@ std::pair <bool, int> System::game_finished(std::vector<ObjectPosition> &player_
             }
         }
 
-    //if (player_position.position == end_state_pos  ){
-    /*
-    if (chests.size() == player.done_chests.size()){
-            std::cout <<"It gets here for some reason " <<"\n";
-            std::cout <<player_position.position.first << " " << player_position.position.second << "\n";
-            std::cout << end_state_pos.first << " " << end_state_pos.second << "\n";
-            return true;
-        }
-    */
-        
-    //}
+    
     return {false, 0};
 }
 
@@ -55,8 +37,8 @@ void System::display_game(MapInformation &mapInfo){
 
 }
 
-MapInformation System::load_map(){
-    MapInformation map =  map_manager.starting_position(3,5);
+MapInformation System::load_map(int &number_chests, int &number_enemies, std::string &filename){
+    MapInformation map =  map_manager.starting_position(number_enemies,number_chests, filename);
     
     return map;
 
@@ -85,7 +67,8 @@ MapInformation System::reset_map(MapInformation current_state){
 
 
 void System::run_game(MapInformation game_state, bool is_ai){
-    MapInformation original_state = game_state;
+    
+    
    
     std::pair<MapInformation,bool> new_state;
     std::cout<< "PLAYER STATS " << game_state.player[0].position.first <<" "<< game_state.player[0].position.second <<"\n";

@@ -10,11 +10,42 @@ Responsibilities:
 
 */
 
-MapInformation MapManager::starting_position(int number_of_enemies, int number_of_chests){
+
+void  MapManager::build_map(std::string &filename){
+    
+    std::ifstream file(filename);
+    if (!file.is_open()) {
+        std::cout << "Could not open file\n"; //Need to find a better way to raise this exception
+        
+    }
+    std::string line;
+    int y_coords = 0;
+    while (std::getline(file, line)) {
+        for (int i = 0; i < line.length(); i++){
+            if (line[i] == '#'){
+                MapBitMap.mazeMap[{i, y_coords}] = Wall{};
+            }
+            else if (line[i] == '.'){
+                MapBitMap.mazeMap[{i, y_coords}] = EmptySpace{};
+
+            }
+        }
+        y_coords +=1;
+    }
+    MapBitMap.map_link = filename;
+    file.close();
+};
+MapInformation MapManager::starting_position(int &number_of_enemies, int &number_of_chests, std::string &filename){
     /*
     Set the starting positions
     Load the map and make sure
+
     */
+   build_map(filename);
+    if (MapBitMap.mazeMap.empty()) {
+        std::cout << "Map is empty\n"; //Here i can raise some sort of error
+    }
+
     std::vector<ObjectPosition> enemies = generate_starting_postions("enemy", number_of_enemies);
     std::vector<ObjectPosition> chest = generate_starting_postions("chest", number_of_chests);
     std::vector<ObjectPosition> player = generate_starting_postions("player", 1);

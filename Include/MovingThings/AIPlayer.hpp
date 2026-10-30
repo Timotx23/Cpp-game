@@ -1,10 +1,32 @@
 #pragma once
 #include <vector>
 #include <map>
+#include "../Map/Map.hpp"
 
-class AIPlayer{
+struct Node{
+    std::pair<int,int> position;
+        int g_cost;
+        int h_cost;
+        int f_cost;
+    };
+
+
+
+struct AIPlayer{
+    std::vector<Node> open_list;
+    std::vector<Node> closed_lst;
+    int current_cost;
+
+
+};
+class AIMovement{
     private:
-        std::map<std::string, std::pair<int,int>> movements = {{"w", {0,-1}}, {"s", {0,1}}, {"a", {-1,0}}, {"d", {1,0}}};
+        
+        Node node;
+        AIPlayer ai_player;
+        std::vector<std::pair<int,int>> movements = {{0,-1}, {0,1}, {-1,0}, {1,0}};
     public:
-        std::pair<int, int> new_ai_player_pos(std::pair<int,int> player);
+        
+        std::pair<int, int> new_ai_player_pos(std::pair <int, int> ai_player_position, Map_info &map,std::pair<int, int> goal_pos, int current_cost);
+
 };

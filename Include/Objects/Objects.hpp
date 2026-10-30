@@ -7,12 +7,16 @@ struct GameStartState{
 
 };
 
+
 struct Player{
     std::string sign = "P";
     int number_of_lives = 3;
     int score = 0;
     Color color = BLUE;
     std::vector<int> done_chests = {};
+    std::pair <int, int> goal_chest_coords = {20,20};
+    int current_cost;
+    
     
 };
 struct Enemy{

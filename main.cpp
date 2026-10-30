@@ -1,27 +1,24 @@
 
 #include "Include/System.hpp"
+#include "Include/HYPERPARAMETERS.hpp"
 #include "iostream"
+
+
 
 
 int main(){
     static System system;
+    HyperParameters hyperparameters;
     int is_ai_player;
 
     std::cout << " Enter 1 for AI player else Enter 0  ";
     std::cin >> is_ai_player;
     if (is_ai_player == 1){
-        system.game_runner(true);
+        system.game_runner(true,  hyperparameters);
     }
     else if (is_ai_player == 0){
-        system.game_runner(false);
-    }
-
-
-   
-
-
- 
-    
+        system.game_runner(false, hyperparameters);
+    } 
 };
 
 /*
