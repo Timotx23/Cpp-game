@@ -22,11 +22,46 @@ void  MapManager::build_map(std::string &filename){
     int y_coords = 0;
     while (std::getline(file, line)) {
         for (int i = 0; i < line.length(); i++){
+            std::pair<int, int> coords = {i, y_coords};
             if (line[i] == '#'){
                 MapBitMap.mazeMap[{i, y_coords}] = Wall{};
             }
             else if (line[i] == '.'){
                 MapBitMap.mazeMap[{i, y_coords}] = EmptySpace{};
+
+            }
+            else if(line[i] == 'P'){
+                MapBitMap.mazeMap[{i, y_coords}] = Player{};
+                MapBitMap.contains_objects["Player"] = true;
+                
+                map_read_player.push_back(ObjectPosition{coords, Player{} });
+
+            }
+            else if (line[i] == 'X'){
+                MapBitMap.mazeMap[{i, y_coords}] = EndState{};
+                MapBitMap.contains_objects["Exit"] = true;
+                map_read_end_state.push_back(ObjectPosition{coords, EndState{} });
+
+
+            }
+            else if (line[i] == 'E'){
+                Enemy enemy{"E", RED, number_of_enemies};
+                number_of_enemies+=1;
+                
+                MapBitMap.mazeMap[coords] = enemy;
+                MapBitMap.contains_objects["Enemy"] = true;
+                map_read_enemies.push_back(ObjectPosition{coords, enemy });
+
+
+
+            }
+            else if (line[i] == 'T'){
+                Chest chest{"C", YELLOW, number_of_chests};
+                number_of_chests+=1;
+                MapBitMap.mazeMap[coords] = chest;
+                map_read_chests.push_back(ObjectPosition{coords, chest });
+                MapBitMap.contains_objects["Treasure"] = true;
+
 
             }
         }
@@ -45,11 +80,49 @@ MapInformation MapManager::starting_position(int &number_of_enemies, int &number
     if (MapBitMap.mazeMap.empty()) {
         std::cout << "Map is empty\n"; //Here i can raise some sort of error
     }
+    for (const auto& item :MapBitMap.contains_objects ) {
 
+        if (item.first == "Player"){
+            if(item.second == false){
+                player = generate_starting_postions("player", 1);
+            }
+            else{
+                player = map_read_player;
+            }
+        }
+        else if (item.first == "Treasure"){
+            if (item.second == false){
+                chest = generate_starting_postions("chest", number_of_chests);
+            }
+            else{
+                chest = map_read_chests;
+        }
+    }
+        else if (item.first == "Enemy"){
+          if (  item.second == false){
+           enemies = generate_starting_postions("enemy", number_of_enemies);
+          }
+          else{
+            enemies = map_read_enemies;
+          }
+        } 
+        else if (item.first == "Exit"){
+            if (item.second == false){
+                end_state = generate_starting_postions("end_state", 1);
+            }
+            else{
+                end_state = map_read_end_state;
+            }
+        }
+        }
+
+    /*
     std::vector<ObjectPosition> enemies = generate_starting_postions("enemy", number_of_enemies);
     std::vector<ObjectPosition> chest = generate_starting_postions("chest", number_of_chests);
     std::vector<ObjectPosition> player = generate_starting_postions("player", 1);
     std::vector<ObjectPosition> end_state = generate_starting_postions("end_state", 1);
+    */
+    
     return MapInformation{enemies,chest,player,MapBitMap, end_state};
 };
 
@@ -80,14 +153,14 @@ std::vector<ObjectPosition> MapManager::generate_starting_postions(std::string n
         std::pair<int, int> coords = {0,0};
         if (name == "player"){
             
-            coords = {1,18}; // only hard coded coord
+            coords = player_starting_pos;
          
             pos.push_back(ObjectPosition{coords, Player{}});
             game_starting_state.player_starting_pos.push_back(coords);
         }
         
         else if(name == "end_state"){
-            coords = {18,1}; // only hard coded coord
+            coords = end_state_defult; 
             replace_value(coords, EndState{} );
             pos.push_back(ObjectPosition{coords, EndState{} });
 
