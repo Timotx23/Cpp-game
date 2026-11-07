@@ -1,11 +1,10 @@
 #include "Include/System.hpp"
 #include <iostream>
 
-
-
 void System::game_runner(bool is_ai_runner, HyperParameters hyperparameters){
     MapInformation loadmap = load_map(hyperparameters.CHESTS ,hyperparameters.ENEMIES, hyperparameters.FILENAME);
     frontend.run(loadmap);
+    
     run_game(loadmap, is_ai_runner);
 };
 std::pair <bool, int> System::game_finished(std::vector<ObjectPosition> &player_pos,std::vector<ObjectPosition> &end_state,std::vector<ObjectPosition> &chests  ){
@@ -39,7 +38,6 @@ void System::display_game(MapInformation &mapInfo){
 
 MapInformation System::load_map(int &number_chests, int &number_enemies, std::string &filename){
     MapInformation map =  map_manager.starting_position(number_enemies,number_chests, filename);
-    
     return map;
 
 };
@@ -74,6 +72,7 @@ void System::run_game(MapInformation game_state, bool is_ai){
     std::cout<< "PLAYER STATS " << game_state.player[0].position.first <<" "<< game_state.player[0].position.second <<"\n";
     Player& player_data = std::get<Player>(game_state.player[0].name);
     std::cout<< "PLAYER Lives " << player_data.number_of_lives  <<"\n";
+    
     while (game_running){
         
         new_state = game_engine.update_state(game_state, is_ai);
@@ -109,13 +108,6 @@ void System::run_game(MapInformation game_state, bool is_ai){
     CloseWindow();
     
     
-    /* Starting_state
-    std::vector<ObjectPosition> enemies = generate_starting_postions("enemy", number_of_enemies);
-    std::vector<ObjectPosition> chest = generate_starting_postions("chest", number_of_chests);
-    std::vector<ObjectPosition> player = generate_starting_postions("player", 1);
-    return MapInformation{enemies,chest,player,MapBitMap};
-    
-    */
 
 
     

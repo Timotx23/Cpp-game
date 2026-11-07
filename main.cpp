@@ -9,14 +9,36 @@
 int main(){
     static System system;
     HyperParameters hyperparameters;
-    int is_ai_player;
+    try{
+        std::cout << " Enter 1 for AI player else Enter 0  ";
+        if (!(std::cin >> hyperparameters.is_ai_player) || hyperparameters.is_ai_player != 0 && hyperparameters.is_ai_player != 1 ){
+            throw std::invalid_argument("Choose number between 0 and 1 only!");
+        }
+    
+    if (!hyperparameters.is_test_mode){
+        std::cout << "Enter number of chests between 1 and 10: ";
+        if (!(std::cin >> hyperparameters.CHESTS) || hyperparameters.CHESTS < 1 || hyperparameters.CHESTS > 10) {
+            throw std::invalid_argument("Invalid number of chests!");
+        }
+        std::cout << "Enter number of Enemy players between 1 - 5: ";
+        if (!(std::cin >> hyperparameters.ENEMIES) || hyperparameters.ENEMIES < 1 || hyperparameters.ENEMIES > 5 ) {
+            throw std::invalid_argument("Invalid number of enemies!");
+        }
+        
+    }
 
-    std::cout << " Enter 1 for AI player else Enter 0  ";
-    std::cin >> is_ai_player;
-    if (is_ai_player == 1){
+
+    }
+    
+    catch (const std::invalid_argument& e) {
+    std::cerr << "Error: " << e.what() << std::endl;
+    return 1;
+    }
+
+    if (hyperparameters.is_ai_player == 1){
         system.game_runner(true,  hyperparameters);
     }
-    else if (is_ai_player == 0){
+    else if (hyperparameters.is_ai_player == 0){
         system.game_runner(false, hyperparameters);
     } 
 };

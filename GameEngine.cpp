@@ -163,7 +163,6 @@ std::pair <MapInformation, bool> GameEngine::update_state(MapInformation current
         map.first.mazeMap[old_player] = EmptySpace{};
     }
     
-    
     current_state.player[0].position = new_player;
     current_state.map_state = map.first;
     current_state.treasures = chests;

@@ -8,18 +8,19 @@ Responsibilities:
     - keep track of character postions 
 
 
+
 */
 
 
 void  MapManager::build_map(std::string &filename){
-    
     std::ifstream file(filename);
-    if (!file.is_open()) {
-        std::cout << "Could not open file\n"; //Need to find a better way to raise this exception
-        
-    }
     std::string line;
     int y_coords = 0;
+
+    
+    if(!file.is_open()){
+        throw std::invalid_argument("Invalid file format");
+    }
     while (std::getline(file, line)) {
         for (int i = 0; i < line.length(); i++){
             std::pair<int, int> coords = {i, y_coords};
@@ -41,8 +42,6 @@ void  MapManager::build_map(std::string &filename){
                 MapBitMap.mazeMap[{i, y_coords}] = EndState{};
                 MapBitMap.contains_objects["Exit"] = true;
                 map_read_end_state.push_back(ObjectPosition{coords, EndState{} });
-
-
             }
             else if (line[i] == 'E'){
                 Enemy enemy{"E", RED, number_of_enemies};
@@ -52,8 +51,6 @@ void  MapManager::build_map(std::string &filename){
                 MapBitMap.contains_objects["Enemy"] = true;
                 map_read_enemies.push_back(ObjectPosition{coords, enemy });
 
-
-
             }
             else if (line[i] == 'T'){
                 Chest chest{"C", YELLOW, number_of_chests};
@@ -61,14 +58,19 @@ void  MapManager::build_map(std::string &filename){
                 MapBitMap.mazeMap[coords] = chest;
                 map_read_chests.push_back(ObjectPosition{coords, chest });
                 MapBitMap.contains_objects["Treasure"] = true;
-
-
             }
+            else{
+                throw std::invalid_argument("Invalid character '" + std::string(1, line[i]) + "' at x=" + std::to_string(i) + ", y=" + std::to_string(y_coords));
+            }       
         }
         y_coords +=1;
-    }
-    MapBitMap.map_link = filename;
-    file.close();
+}
+MapBitMap.map_link = filename;
+file.close();
+
+
+
+    
 };
 MapInformation MapManager::starting_position(int &number_of_enemies, int &number_of_chests, std::string &filename){
     /*
@@ -76,10 +78,14 @@ MapInformation MapManager::starting_position(int &number_of_enemies, int &number
     Load the map and make sure
 
     */
-   build_map(filename);
-    if (MapBitMap.mazeMap.empty()) {
-        std::cout << "Map is empty\n"; //Here i can raise some sort of error
+   try{
+    build_map(filename);
+   }
+   
+    catch (const std::exception& e) {
+        std::cerr << "Map loading failed: " << e.what() << std::endl;
     }
+    
     for (const auto& item :MapBitMap.contains_objects ) {
 
         if (item.first == "Player"){
@@ -185,20 +191,30 @@ std::vector<ObjectPosition> MapManager::generate_starting_postions(std::string n
     return pos;
 };
 
-MapInformation MapManager::reset_map(MapInformation current_state){
+MapInformation MapManager::reset_map(MapInformation current_state) {
 
-    //Reset the player to original coords
-    //Reset all enemies to original coords
-    std::pair<int, int> old_player_pos =current_state.player[0].position;
+    //Remove all enemies from the field before doing anything else -> this fixes the duplication issue
+    for (auto& [coords, tile] : current_state.map_state.mazeMap) {
+        if (std::holds_alternative<Enemy>(tile)) {
+            tile = EmptySpace{};
+        }
+    }
+
+    //reset player and make sure they start in the original position
+    std::pair<int, int> old_player_pos = current_state.player[0].position;
     current_state.map_state.mazeMap.at(old_player_pos) = EmptySpace{};
-    current_state.player[0].position = game_starting_state.player_starting_pos[0];
-    Player& p =std::get<Player>(current_state.player[0].name);
+    current_state.player[0].position =game_starting_state.player_starting_pos[0];
+    Player& p = std::get<Player>(current_state.player[0].name);
     current_state.map_state.mazeMap.at(game_starting_state.player_starting_pos[0]) = p;
+
     
-    for (int i = 0; i < game_starting_state.enemy_starting_pos.size(); i++){
-        current_state.enemies[i].position = game_starting_state.enemy_starting_pos[i];
-        Enemy& enemy =std::get<Enemy>(current_state.enemies[i].name);
-        current_state.map_state.mazeMap.at(game_starting_state.enemy_starting_pos[i]) = enemy; 
+    
+    // reset each individual enemy that is on the field
+    for (size_t i = 0; i < current_state.enemies.size(); i++) {
+        std::pair<int, int> starting_pos = game_starting_state.enemy_starting_pos[i];
+        current_state.enemies[i].position = starting_pos;
+        Enemy& enemy = std::get<Enemy>(current_state.enemies[i].name);
+        current_state.map_state.mazeMap.at(starting_pos) = enemy;
     }
     return current_state;
 }
