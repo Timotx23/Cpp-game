@@ -15,9 +15,7 @@ Responsibilities:
 void  MapManager::build_map(std::string &filename){
     std::ifstream file(filename);
     std::string line;
-    int y_coords = 0;
-
-    
+    int y_coords = 0;    
     if(!file.is_open()){
         throw std::invalid_argument("Invalid file format");
     }
@@ -158,9 +156,8 @@ std::vector<ObjectPosition> MapManager::generate_starting_postions(std::string n
     for (int i = 0; i < number; i ++){
         std::pair<int, int> coords = {0,0};
         if (name == "player"){
-            
             coords = player_starting_pos;
-         
+            replace_value(coords, Player{}); // Place player on map
             pos.push_back(ObjectPosition{coords, Player{}});
             game_starting_state.player_starting_pos.push_back(coords);
         }
@@ -199,7 +196,6 @@ MapInformation MapManager::reset_map(MapInformation current_state) {
             tile = EmptySpace{};
         }
     }
-
     //reset player and make sure they start in the original position
     std::pair<int, int> old_player_pos = current_state.player[0].position;
     current_state.map_state.mazeMap.at(old_player_pos) = EmptySpace{};
@@ -207,8 +203,6 @@ MapInformation MapManager::reset_map(MapInformation current_state) {
     Player& p = std::get<Player>(current_state.player[0].name);
     current_state.map_state.mazeMap.at(game_starting_state.player_starting_pos[0]) = p;
 
-    
-    
     // reset each individual enemy that is on the field
     for (size_t i = 0; i < current_state.enemies.size(); i++) {
         std::pair<int, int> starting_pos = game_starting_state.enemy_starting_pos[i];

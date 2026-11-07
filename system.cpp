@@ -4,6 +4,8 @@
 void System::game_runner(bool is_ai_runner, HyperParameters hyperparameters){
     MapInformation loadmap = load_map(hyperparameters.CHESTS ,hyperparameters.ENEMIES, hyperparameters.FILENAME);
     frontend.run(loadmap);
+    display_game(loadmap);
+    
     
     run_game(loadmap, is_ai_runner);
 };
@@ -23,10 +25,8 @@ std::pair <bool, int> System::game_finished(std::vector<ObjectPosition> &player_
     return {false, 0};
 }
 
-
-
 void System::display_game(MapInformation &mapInfo){
-
+    
     BeginDrawing();
     ClearBackground(RAYWHITE);
 
