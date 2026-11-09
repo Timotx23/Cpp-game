@@ -23,11 +23,8 @@ int main(){
         std::cout << "Enter number of Enemy players between 1 - 5: ";
         if (!(std::cin >> hyperparameters.ENEMIES) || hyperparameters.ENEMIES < 1 || hyperparameters.ENEMIES > 5 ) {
             throw std::invalid_argument("Invalid number of enemies!");
-        }
-        
+        }   
     }
-
-
     }
     
     catch (const std::invalid_argument& e) {

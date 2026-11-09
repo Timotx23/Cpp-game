@@ -83,7 +83,6 @@ void GameEngine::validate_chests(Map_info &map, std::map<std::pair<int,int>,std:
         }
  }
  std::pair<Map_info, bool> GameEngine::update_map(Map_info map,std::vector<ObjectPosition> enemy_pos, std::pair<int, int> player_pos, Player& p , std::vector<ObjectPosition> &chests ){
-    
     auto player_position = map.mazeMap.find(player_pos);
     if (player_position == map.mazeMap.end()) {
         return {map, false};
@@ -127,21 +126,27 @@ std::pair <MapInformation, bool> GameEngine::update_state(MapInformation current
     /*
     This is the logic handler of each state of the game
     - Get the old position of player
-    - Get the actual player struct from the current state
+    - Get the actual player struct from the current state -> call upon it once and then always pass a reference
+    - Get a new player position
+    - Get new enemy position
+    - Evaluate new player position (check if player moved, if move move was valid etc)
+    - Evaluate new player pos with new enemy pos
+    - Update map 
+
     */
     auto old_player = current_state.player[0].position;
     Player& p = std::get<Player>(current_state.player[0].name);
 
-    std::pair<int,int> player_position = old_player;
+    
     std::pair<int,int>  new_player = {0,0};
     auto& chests = current_state.treasures;
     auto endstate = current_state.endstate[0];
 
-    std::pair<std::pair<int, int>,bool> temp_player = generate_player(player_position, is_ai, current_state, endstate, p, chests);
+    std::pair<std::pair<int, int>,bool> temp_player = generate_player(old_player, is_ai, current_state, endstate, p, chests);
     if (!temp_player.second){
         return {current_state, true};
     }
-        new_player = temp_player.first;
+    new_player = temp_player.first;
     if (old_player == new_player) {
             return {current_state, true};
         }

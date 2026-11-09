@@ -4,9 +4,7 @@
 struct GameStartState{
     std::vector< std::pair<int, int>> player_starting_pos;
     std::vector<std::pair<int, int>> enemy_starting_pos;
-
 };
-
 
 struct Player{
     std::string sign = "P";
@@ -15,36 +13,29 @@ struct Player{
     Color color = BLUE;
     std::vector<int> done_chests = {};
     std::pair <int, int> goal_chest_coords = {20,20};
-    int current_cost;
-    
-    
+    int current_cost = 0; 
 };
+
 struct Enemy{
     std::string sign;
     Color color;
     int enemy_id;
-
-    
-
 };
 struct Chest{
     std::string sign;
     Color color;
     int chest_id;
-
 };
+
 struct Wall{
     std::string sign = "#";
-
 };
+
 struct EmptySpace{
     std::string sign;
-
 };
 
 struct EndState{
     Color color = GREEN;
-    std::string sign = "G";
-    
-
+    std::string sign = "X";
 };

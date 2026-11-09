@@ -1,12 +1,7 @@
 #include "../Include/MovingThings/AIPlayer.hpp"
 #include "iostream"
 
-std::pair<int,int> AIMovement::new_ai_player_pos(
-    std::pair<int, int> ai_player_position,
-    Map_info &map,
-    std::pair<int, int> goal,
-    int current_cost
-){
+std::pair<int,int> AIMovement::new_ai_player_pos(std::pair<int, int> ai_player_position,Map_info &map,std::pair<int, int> goal,int current_cost){
     /* 
         A*:
         f(n) = g(n) + h(n)
@@ -21,16 +16,10 @@ std::pair<int,int> AIMovement::new_ai_player_pos(
         int h_cost;
         int f_cost;
     };
-    // Nodes that still need to be checked
     std::vector<Node> open_list;
-    // Nodes already checked
     std::vector<std::pair<int,int>> closed_list;
-    // Used to reconstruct the final path
     std::map<std::pair<int,int>,std::pair<int,int>> came_from;
-
-    // Store cheapest known g-cost for each position
     std::map<std::pair<int,int>, int> g_costs;
-    // Starting node
     int start_h = std::abs(goal.first - ai_player_position.first)+ std::abs(goal.second - ai_player_position.second);
 
     Node start_node;

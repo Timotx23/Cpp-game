@@ -5,35 +5,26 @@ void System::game_runner(bool is_ai_runner, HyperParameters hyperparameters){
     MapInformation loadmap = load_map(hyperparameters.CHESTS ,hyperparameters.ENEMIES, hyperparameters.FILENAME);
     frontend.run(loadmap);
     display_game(loadmap);
-    
-    
     run_game(loadmap, is_ai_runner);
 };
+
 std::pair <bool, int> System::game_finished(std::vector<ObjectPosition> &player_pos,std::vector<ObjectPosition> &end_state,std::vector<ObjectPosition> &chests  ){
     ObjectPosition player_position = player_pos[0];
     std::pair<int,int> end_state_pos = end_state[0].position;
     if (std::holds_alternative<Player>(player_position.name)) {
             Player& player = std::get<Player>(player_position.name);
-
             if (chests.size() == player.done_chests.size() && player_position.position == end_state_pos) {
-                
                 return {true, player.score};
             }
         }
-
-    
     return {false, 0};
 }
 
 void System::display_game(MapInformation &mapInfo){
-    
     BeginDrawing();
     ClearBackground(RAYWHITE);
-
     frontend.drawMap(mapInfo);
-
     EndDrawing();
-
 }
 
 MapInformation System::load_map(int &number_chests, int &number_enemies, std::string &filename){
@@ -41,6 +32,7 @@ MapInformation System::load_map(int &number_chests, int &number_enemies, std::st
     return map;
 
 };
+
 std::pair < bool, int > System::can_continue(std::vector<ObjectPosition> &player_pos){
     if (player_pos.empty() || !std::holds_alternative<Player>(player_pos[0].name)) {
         return {true, 0};
@@ -58,21 +50,16 @@ std::pair < bool, int > System::can_continue(std::vector<ObjectPosition> &player
 
 MapInformation System::reset_map(MapInformation current_state){
     MapInformation resetet_map = map_manager.reset_map(current_state);
-
-
     return resetet_map;
 }
 
 
 void System::run_game(MapInformation game_state, bool is_ai){
-    
-    
-   
+
     std::pair<MapInformation,bool> new_state;
     std::cout<< "PLAYER STATS " << game_state.player[0].position.first <<" "<< game_state.player[0].position.second <<"\n";
     Player& player_data = std::get<Player>(game_state.player[0].name);
     std::cout<< "PLAYER Lives " << player_data.number_of_lives  <<"\n";
-    
     while (game_running){
         
         new_state = game_engine.update_state(game_state, is_ai);
@@ -88,7 +75,6 @@ void System::run_game(MapInformation game_state, bool is_ai){
             std::cout <<"Score: " << is_finished.second <<"\n";
             game_running = false;
         }
-
         else if (new_state.second == false){
             std::cout <<"You died" << "\n";
             std::pair<bool, int> is_over = can_continue(new_state.first.player);
