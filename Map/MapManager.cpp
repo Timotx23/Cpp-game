@@ -172,7 +172,7 @@ std::vector<ObjectPosition> MapManager::generate_starting_postions(std::string n
         else{
             coords = generate_random_position();
             if (name == "chest"){
-                Chest chest{"C", YELLOW, i}; 
+                Chest chest{"T", YELLOW, i}; 
                 replace_value(coords, chest );
                 pos.push_back(ObjectPosition{coords, chest });
             }

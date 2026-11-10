@@ -22,7 +22,7 @@ struct Enemy{
     int enemy_id;
 };
 struct Chest{
-    std::string sign;
+    std::string sign;;
     Color color;
     int chest_id;
 };

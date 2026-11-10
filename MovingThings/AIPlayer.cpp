@@ -72,7 +72,7 @@ std::pair<int,int> AIMovement::new_ai_player_pos(std::pair<int, int> ai_player_p
                 continue;// Ignore tiles already checked
             }
             int new_g_cost = current.g_cost + 1;
-            // Manhattan distance
+            // calculate distance
             int h_cost = std::abs(goal.first - move.first) + std::abs(goal.second - move.second);
             int f_cost = new_g_cost + h_cost;
             //unseen tiles

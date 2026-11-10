@@ -75,13 +75,14 @@ void GameEngine::validate_chests(Map_info &map, std::map<std::pair<int,int>,std:
                 if (std::find( p.done_chests.begin(), p.done_chests.end(),chest_data.chest_id ) == p.done_chests.end()) {
                         p.score += 10; 
                         p.done_chests.push_back(chest_data.chest_id);
-                        p.goal_chest_coords = {20,20};
+                        p.goal_chest_coords = {20,20};// for the AI player relivant as it resets the next goal chest
                         map.mazeMap[player_pos] = p;
                         break;
                     }
             }        
         }
  }
+
  std::pair<Map_info, bool> GameEngine::update_map(Map_info map,std::vector<ObjectPosition> enemy_pos, std::pair<int, int> player_pos, Player& p , std::vector<ObjectPosition> &chests ){
     auto player_position = map.mazeMap.find(player_pos);
     if (player_position == map.mazeMap.end()) {
@@ -153,7 +154,7 @@ std::pair <MapInformation, bool> GameEngine::update_state(MapInformation current
     auto new_enemies = new_enemy_pos(current_state.enemies, current_state.map_state);
     for (int i =0; i < new_enemies.size(); i ++){
         if (!validate_postion(new_player, new_enemies[i].position )){
-            return {current_state, false};
+            return {current_state, false}; // logical mistake it doesn't update the state before return false causing it to glitch a bit
         }
     }
     current_state.enemies = new_enemies;
